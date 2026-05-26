@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Al-Quran Edisi Khas Aidiladha</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Pattaya&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #f0f4f1;
+            --container-bg: rgba(255, 255, 255, 0.95);
+            --text-color: #2c3e50;
+            --text-arab: #111111;
+            --text-muted: #555555;
+            --border-color: #d1e7dd;
+            --primary-color: #27ae60;
+            --accent-color: #d35400;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121b15;
+            --container-bg: rgba(30, 41, 34, 0.95);
+            --text-color: #e0e0e0;
+            --text-arab: #ffffff;
+            --text-muted: #b0b0b0;
+            --border-color: #2c3e26;
+            --primary-color: #2ecc71;
+            --accent-color: #e67e22;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* GIMIK INTRO LOADING & LETUPAN BOM */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0b130e;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-box {
+            text-align: center;
+            width: 300px;
+        }
+
+        .loading-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .bar-luar {
+            width: 100%;
+            height: 20px;
+            background: #222;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #27ae60;
+        }
+
+        .bar-dalam {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            transition: width 0.1s linear;
+        }
+
+        /* Animasi Bom Meletup & Ucapan */
+        .efek-letupan {
+            display: none;
+            text-align: center;
+            animation: kaboom 0.4s ease-out;
+        }
+
+        .teks-raya {
+            font-family: 'Pattaya', sans-serif;
+            font-size: 36px;
+            color: #f1c40f;
+            text-shadow: 0 0 20px #e67e22;
+            margin-top: 20px;
+            line-height: 1.5;
+            opacity: 0;
+            animation: munculTeks 2s forwards 0.5s;
+        }
+
+        @keyframes kaboom {
+            0% { transform: scale(0.1); background: #ffffff; box-shadow: 0 0 10px #fff; }
+            50% { background: #ff5722; box-shadow: 0 0 100px 50px #ff5722, 0 0 200px 100px #f1c40f; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        @keyframes munculTeks {
+            to { opacity: 1; }
+        }
+
+        /* STRUKTUR UTAMA UTK BACKGROUND HARI RAYA KORBAN */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            min-height: 100vh;
+            /* Latar belakang ilustrasi suasana padang raya, lembu, dan imam secara CSS minimalis/siluet */
+            background-image: 
+                radial-gradient(circle at 80% 20%, #f1c40f 0%, transparent 10%),
+                linear-gradient(to top, #27ae60 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* Elemen Hiasan Lembu & Imam (Menggunakan Emoji Besar sebagai Grafik Mudah) */
+        .hiasan-raya {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            font-size: 70px;
+            z-index: -1;
+            user-select: none;
+            opacity: 0.8;
+            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.2));
+        }
+        .hiasan-raya::after {
+            content: "🕌 🧔‍♂️ 🔪 🐂"; /* Imam, pisau dan lembu suasanan korban */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            backdrop-filter: blur(5px);
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .badge-halal { border: 2px solid #27ae60; color: #27ae60; }
+        .badge-original { background: #34495e; color: #fff; }
+        .badge-raya { background: #d35400; color: #fff; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        h1 { color: var(--primary-color); font-size: 24px; }
+
+        .header-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .btn-action {
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .btn-peristiwa { background: #e67e22; }
+        .btn-tutorial { background: #f39c12; }
+        .btn-tema { background: var(--primary-color); }
+
+        /* INPUT SEARCH & SELECT */
+        .search-box, .pilihan-surah {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        /* PAPARAN AYAT AL-QURAN */
+        .ayat-box {
+            padding: 20px;
+            border-bottom: 1px dashed var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .teks-arab {
+            font-size: 32px;
+            text-align: right;
+            direction: rtl;
+            font-family: 'Amiri', serif;
+            line-height: 2.2;
+            color: var(--text-arab);
+        }
+
+        .teks-terjemahan {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .nombor-ayat {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 50%;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        /* MODAL / SKRIN PERISTIWA HARI RAYA KORBAN */
+        .modal-peristiwa {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 30px 20px;
+        }
+
+        .peristiwa-content {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--container-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .peristiwa-content h2 {
+            color: #d35400;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #e67e22;
+            padding-bottom: 10px;
+        }
+
+        .peristiwa-text {
+            line-height: 1.8;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+
+        .peristiwa-text h3 {
+            margin-top: 20px;
+            color: var(--primary-color);
+        }
+
+        .btn-back {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        /* POPUP TUTORIAL */
+        .modal-tutorial {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1500;
+        }
+        .tutorial-content {
+            background: var(--container-bg); padding: 30px; border-radius: 12px; max-width: 500px; width: 90%;
+        }
+        .tutorial-content ul { margin: 15px 0 20px 20px; line-height: 1.8; }
+    </style>
+</head>
+<body>
+
+    <div id="intro-overlay">
+        <div class="loading-box" id="kotak-loading">
+            <div class="loading-text">MEMUATKAN SISTEM... <span id="angka-loading">0</span>%</div>
+            <div class="bar-luar">
+                <div class="bar-dalam" id="progress-bar"></div>
+            </div>
+        </div>
+        <div class="efek-letupan" id="zon-letupan">
+            <div style="font-size: 80px;">💥💥💥</div>
+            <div class="teks-raya">
+                ✨ SELAMAT HARI RAYA HAJI & ARAFAH ✨<br>
+                <span style="font-size: 20px; color: #fff;">Ibadah Korban Membawa Berkat</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="hiasan-raya"></div>
+
+    <div class="container">
+        <div class="badge-container">
+            <span class="badge badge-halal">🟢 HALAL QURAN WEB</span>
+            <span class="badge badge-original">✔ ORIGINAL DATA VERIFIED</span>
+            <span class="badge badge-raya">🕋 EDISI RAYA KORBAN</span>
+        </div>
+
+        <header>
+            <div>
+                <h1>Al-Quran Digital Pro</h1>
+                <p style="font-size: 13px; color: var(--text-muted);">Penghayatan Al-Quran & Sirah Islam</p>
+            </div>
+            <div class="header-buttons">
+                <button class="btn-action btn-peristiwa" id="btn-buka-peristiwa">🐂 Peristiwa Korban</button>
+                <button class="btn-action btn-tutorial" id="btn-buka-tutorial">💡 Panduan</button>
+                <button class="btn-action btn-tema" id="btn-tema">🌙 Tema</button>
+            </div>
+        </header>
+
+        <input type="text" id="kotak-carian" class="search-box" placeholder="Cari nama atau nombor surah...">
+        <select id="senarai-surah" class="pilihan-surah">
+            <option value="">-- Memuatkan surah... --</option>
+        </select>
+
+        <main id="papar-surah">
+            <p style="text-align: center; font-style: italic; color: var(--text-muted);">Sila pilih surah di atas untuk memulakan bacaan.</p>
+        </main>
+    </div>
+
+    <div class="modal-peristiwa" id="modal-peristiwa">
+        <div class="peristiwa-content">
+            <h2>🕋 Peristiwa Hari Raya Korban & Sejarahnya</h2>
+            <div class="peristiwa-text">
+                <p>Hari Raya Korban (Aidiladha) disambut bagi memperingati kisah pengorbanan agung dalam sejarah Islam yang melibatkan **Nabi Ibrahim A.S.** dan anakandanya **Nabi Ismail A.S.**</p>
+                
+                <h3>1. Perintah Melalui Mimpi</h3>
+                <p>Nabi Ibrahim A.S. mendapat perintah daripada Allah SWT melalui mimpi untuk menyembelih anak kesayangannya, Nabi Ismail A.S. Walaupun ia satu ujian yang amat berat, baginda tetap patuh, begitu juga Nabi Ismail yang redha dengan perintah khaliknya.</p>
+                
+                <h3>2. Detik Penyembelihan & Mukjizat</h3>
+                <p>Ketika pisau diletakkan di leher Nabi Ismail A.S., dengan kuasa Allah SWT, pisau tersebut tidak mampu melukakannya. Serta-merta, Allah menggantikan tempat Nabi Ismail dengan **seekor kibas (biri-biri/kambing)** yang besar dari syurga untuk disembelih.</p>
+                
+                <h3>3. Pengajaran Utama Ibadah Korban</h3>
+                <p>Daripada peristiwa inilah bermulanya syariat ibadah korban (menyembelih ternakan seperti lembu, kambing, atau unta) pada setiap 10, 11, 12, dan 13 Zulhijjah. Ia mendidik umat Islam tentang erti ketaatan mutlak, keikhlasan, dan sifat berkongsi rezeki dengan golongan fakir miskin.</p>
+            </div>
+            <button class="btn-back" id="btn-tutup-peristiwa">⬅ Back (Kembali Ke Al-Quran)</button>
+        </div>
+    </div>
+
+    <div class="modal-tutorial" id="modal-panduan">
+        <div class="tutorial-content">
+            <h2 style="color: #f39c12;">💡 Cara Menggunakan Laman Web</h2>
+            <ul>
+                <li><strong>Cari Surah:</strong> Taip nama surah pada kotak carian di skrin utama.</li>
+                <li><strong>Membaca:</strong> Pilih surah daripada menu lungsur untuk melihat teks Arab serta terjemahannya.</li>
+                <li><strong>Peristiwa Korban:</strong> Tekan butang oren "Peristiwa Korban" untuk membaca sirah lengkap, dan tekan "Back" untuk kembali membaca Al-Quran.</li>
+            </ul>
+            <button class="btn-back" style="background:#555;" id="btn-tutup-tutorial">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // Logik Loading Gimik 0% - 100%
+        const overlay = document.getElementById('intro-overlay');
+        const kotakLoading = document.getElementById('kotak-loading');
+        const angkaLoading = document.getElementById('angka-loading');
+        const progressBar = document.getElementById('progress-bar');
+        const zonLetupan = document.getElementById('zon-letupan');
+
+        let count = 0;
+        let counter = setInterval(() => {
+            count++;
+            angkaLoading.textContent = count;
+            progressBar.style.width = count + '%';
+
+            if(count === 100) {
+                clearInterval(counter);
+                // Selesai loading, sorokkan teks loading biasa
+                kotakLoading.style.display = 'none';
+                
+                // Nyalakan letupan bom & ucapan raya
+                zonLetupan.style.display = 'block';
+                zonLetupan.style.animation = 'kaboom 0.5s ease-out';
+
+                // Selepas 3 saat ucapan dipaparkan, hilangkan skrin intro secara penuh
+                setTimeout(() => {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.style.display = 'none', 500);
+                }, 3500);
+            }
+        }, 30); // Kelajuan loading
+
+        // Pembolehubah Utama Al-Quran
+        const senaraiSurahSelect = document.getElementById('senarai-surah');
+        const paparSurahDiv = document.getElementById('papar-surah');
+        const kotakCarian = document.getElementById('kotak-carian');
+        const btnTema = document.getElementById('btn-tema');
+        
+        // Modal Peristiwa & Tutorial
+        const mPeristiwa = document.getElementById('modal-peristiwa');
+        const btnBukaPeristiwa = document.getElementById('btn-buka-peristiwa');
+        const btnTutupPeristiwa = document.getElementById('btn-tutup-peristiwa');
+        
+        const mTutorial = document.getElementById('modal-panduan');
+        const btnBukaTutorial = document.getElementById('btn-buka-tutorial');
+        const btnTutupTutorial = document.getElementById('btn-tutup-tutorial');
+
+        let semuaSurah = [];
+
+        // Ambil Senarai Surah
+        async function muatSenaraiSurah() {
+            try {
+                const respon = await fetch('https://api.alquran.cloud/v1/surah');
+                const data = await respon.json();
+                semuaSurah = data.data;
+                paparkanDropdown(semuaSurah);
+            } catch (r) {
+                senaraiSurahSelect.innerHTML = '<option>Gagal memuatkan data surah.</option>';
+            }
+        }
+
+        function paparkanDropdown(senarai) {
+            senaraiSurahSelect.innerHTML = '<option value="">-- Pilih Surah --</option>';
+            senarai.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.number;
+                opt.textContent = `${s.number}. ${s.englishName} (${s.name})`;
+                senaraiSurahSelect.appendChild(opt);
+            });
+        }
+
+        // Ambil Ayat Al-Quran
+        async function muatAyatSurah(no) {
+            if(!no) return;
+            paparSurahDiv.innerHTML = '<p style="text-align:center;font-style:italic;">Sedang memuatkan ayat...</p>';
+            try {
+                const rArab = await fetch(`https://api.alquran.cloud/v1/surah/${no}`);
+                const rTerj = await fetch(`https://api.alquran.cloud/v1/surah/${no}/en.sahih`);
+                const dArab = await rArab.json();
+                const dTerj = await rTerj.json();
+
+                paparSurahDiv.innerHTML = '';
+                dArab.data.ayahs.forEach((ayat, i) => {
+                    const div = document.createElement('div');
+                    div.classList.add('ayat-box');
+                    div.innerHTML = `
+                        <div class="teks-arab">${ayat.text}</div>
+                        <div class="teks-terjemahan"><span class="nombor-ayat">${ayat.numberInSurah}</span> ${dTerj.data.ayahs[i].text}</div>
+                    `;
+                    paparSurahDiv.appendChild(div);
+                });
+            } catch (e) {
+                paparSurahDiv.innerHTML = '<p>Ralat memuatkan ayat.</p>';
+            }
+        }
+
+        // Logik Carian
+        kotakCarian.addEventListener('input', (e) => {
+            const k = e.target.value.toLowerCase();
+            const hasil = semuaSurah.filter(s => s.englishName.toLowerCase().includes(k) || s.number.toString().includes(k));
+            paparkanDropdown(hasil);
+        });
+
+        // Pengurusan Butang & Modal (Buka / Back)
+        btnBukaPeristiwa.addEventListener('click', () => mPeristiwa.style.display = 'block');
+        btnTutupPeristiwa.addEventListener('click', () => mPeristiwa.style.display = 'none');
+        
+        btnBukaTutorial.addEventListener('click', () => mTutorial.style.display = 'flex');
+        btnTutupTutorial.addEventListener('click', () => mTutorial.style.display = 'none');
+
+        senaraiSurahSelect.addEventListener('change', (e) => muatAyatSurah(e.target.value));
+        
+        btnTema.addEventListener('click', () => {
+            const t = document.documentElement.getAttribute('data-theme');
+            t === 'dark' ? document.documentElement.removeAttribute('data-theme') : document.documentElement.setAttribute('data-theme', 'dark');
+        });
+
+        muatSenaraiSurah();
+    </script>
+</body>
+</html>
